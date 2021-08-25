@@ -4,9 +4,8 @@
 eksctl create cluster \
 --name camp21-quarkus \
 --nodegroup-name linux-nodes \
---node-type t2.micro \
---nodes-min 0 \
---nodes 2 \
+--node-type m4.large \
+--nodes 4 \
 --region eu-central-1 \
 --with-oidc \
 --ssh-access \

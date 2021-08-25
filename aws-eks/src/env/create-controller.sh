@@ -2,7 +2,7 @@
 
 aws iam create-policy \
     --policy-name camp21-LoadBalancerControllerPolicy \
-    --policy-document file://lb-controller-policy.json
+    --policy-document file://src/env/lb-controller-policy.json
 
 eksctl create iamserviceaccount \
   --cluster=camp21-quarkus \
@@ -13,13 +13,10 @@ eksctl create iamserviceaccount \
   --approve
 
 # https://github.com/jetstack/cert-manager/releases/download/v1.1.1/cert-manager.yaml
-kubectl apply \
-    --validate=false \
-    -f cert-manager.yaml
+kubectl apply --validate=false -f src/env/cert-manager.yaml
 
 # https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/v2_2_0_full.yaml
-kubectl apply \
-    -f lb-controller-full.yaml
+kubectl apply -f src/env/lb-controller-full.yaml
 
 # VERIFY
 kubectl get deployment -n kube-system aws-load-balancer-controller

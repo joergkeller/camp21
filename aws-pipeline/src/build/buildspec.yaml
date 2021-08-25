@@ -4,6 +4,12 @@ phases:
   install:
     runtime-versions:
       java: corretto11
+    commands:
+      - apt-get update && apt-get -y install jq python3-pip python3-dev && pip3 install --upgrade awscli
+      - curl -sS -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator
+      - curl -sS -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.14.6/2019-08-22/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl ./aws-iam-authenticator
+      - export PATH=$PWD/:$PATH
   build:
     commands:
       - echo Build started on `date`
@@ -15,6 +21,8 @@ phases:
       - echo Build completed on `date`
       - echo $DOCKER_PASSWORD | docker login --username joergkeller --password-stdin
       - docker push joergkeller/quarkus-sample:v2
+      - aws eks update-kubeconfig --name camp21-quarkus
+      - kubectl apply -f src/main/kubernetes/hello-demo.yaml
 #artifacts:
 #  files:
 #    - target/quarkus-app/*-run.jar
