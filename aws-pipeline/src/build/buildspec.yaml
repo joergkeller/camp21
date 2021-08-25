@@ -8,13 +8,17 @@ phases:
     commands:
       - echo Build started on `date`
       - cd sample
-      - ./mvnw test
-      - ./mvnw package -Pnative -Dquarkus.native.container-build=true
+      - ./mvnw test package -Pnative -Dquarkus.native.container-build=true
+      - docker build -f src/main/docker/Dockerfile.native-distroless -t joergkeller/quarkus-sample:v2 .
   post_build:
     commands:
       - echo Build completed on `date`
+      - echo $DOCKER_PASSWORD | docker login --username joergkeller --password-stdin
+      - docker push joergkeller/quarkus-sample:v2
 #artifacts:
 #  files:
-#    - target/my-app-1.0-SNAPSHOT.jar
+#    - target/quarkus-app/*-run.jar
+#    - target/quarkus-app/lib/*
+#    - target/sample-*-runner
 #    - appspec.yml
 #  discard-paths: yes
