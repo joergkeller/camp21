@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: openjdk11
+  build:
+    commands:
+      - echo Build started on `date`
+      - cd sample && ./mvnw test package -Pnative -Dquarkus.native.container-build=true
+  post_build:
+    commands:
+      - echo Build completed on `date`
+#artifacts:
+#  files:
+#    - target/my-app-1.0-SNAPSHOT.jar
+#    - appspec.yml
+#  discard-paths: yes
