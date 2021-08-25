@@ -1,0 +1,1 @@
+eksctl delete cluster --name camp21-quarkus --region eu-central-1

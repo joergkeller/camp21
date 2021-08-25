@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: quarkus-hello-demo
+  labels:
+    name: quarkus-hello-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app
+  namespace: quarkus-hello-demo
+  labels:
+    app: hello-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-app
+      namespace: quarkus-hello-demo
+  template:
+    metadata:
+      labels:
+        app: hello-app
+        namespace: quarkus-hello-demo
+    spec:
+      containers:
+        - name: hello-app
+          image: docker.io/joergkeller/quarkus-sample:v2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /q/health/live
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /q/health/ready
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+  namespace: quarkus-hello-demo
+spec:
+  type: NodePort
+  selector:
+    app: hello-app
+    namespace: quarkus-hello-demo
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hello-ingress
+  namespace: quarkus-hello-demo
+  labels:
+    app: hello-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: hello-service
+              servicePort: 8080

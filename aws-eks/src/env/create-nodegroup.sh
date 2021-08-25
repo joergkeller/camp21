@@ -1,0 +1,12 @@
+eksctl create nodegroup \
+  --cluster camp21-quarkus \
+  --region eu-central-1 \
+  --name small-linux-nodes \
+  --node-type t2.micro \
+  --nodes 2 \
+  --nodes-min 0 \
+  --nodes-max 2 \
+  --ssh-access \
+  --ssh-public-key aws-ssh-key \
+  --managed \
+  --spot
